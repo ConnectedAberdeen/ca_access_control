@@ -1,0 +1,48 @@
+Request from community portal sent to access management system asking to allow user access to the internet:
+
+{
+    "reqestors_token": "def_community_portal_1263",
+    "time": 1440625003,
+    "action": "allow_internet",
+    "options": {
+        "connection_token": "3q874hfpqnq348u4gad",
+        "access_tier": 1,
+        "valid_until": 1440655002
+    }
+}
+
+Description:
+    requestors_token - token which defines the source of the request - in this case this would be community portal page where user has just logged into and is being granted an access to the internet
+    time - unix timestamp of when this request for action has been created
+    action - name of the action to be taken
+    options - list of options for this particular action
+        connection_token - token identifying IP and MAC of the user to be used for the action (this will be defined in later version of this document) - this will be provided as part of the users first HTTP request to the portal page
+        access_tier - a specific option for this action - this varies depending on the action
+        valid_until - until what time (in unix timestamp) is the effect of the action valid for (e.g. when should we disable access to the internet for the user again)
+
+
+What will be returned back:
+
+{
+    "action_id": 1234,
+    "status": "accepted",
+    "comment": "action has been accepted to be processed soon"
+}
+
+    action_id - an unique ID for this specific action which can then be used to query the status of the request
+    status - status of the action - this may be one of "accepted", "done", "rejected"
+    comment - comment on the status of the action - this is mostly useful as a free-form explanation of the failed status
+
+
+Example of getting a current status of the action:
+
+{
+    "reqestors_token": "def_community_portal_1263",
+    "time": 1440625003,
+    "action": "get_action_status",
+    "options": {
+        "action_id": 1234
+    }
+}
+
+This is self-explanatory. Returned info will be in the same format as above.
