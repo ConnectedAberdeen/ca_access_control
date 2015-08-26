@@ -1,3 +1,7 @@
+All calls here are HTTP/ POST calls to the API link (to be detailed later)
+HTTP content type: application/json
+HTTP encoding: UTF-8 as per RFC 4627
+
 Request from community portal sent to access management system asking to allow user access to the internet:
 
 {
