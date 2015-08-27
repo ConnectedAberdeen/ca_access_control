@@ -2,6 +2,8 @@ All calls here are HTTP/ POST calls to the API link (to be detailed later)
 HTTP content type: application/json
 HTTP encoding: UTF-8 as per RFC 4627
 
+1.1:
+
 Request from community portal sent to access management system asking to allow user access to the internet:
 
 {
@@ -24,6 +26,7 @@ Description:
         access_tier - a specific option for this action - this varies depending on the action
         valid_until - until what time (in unix timestamp) is the effect of the action valid for (e.g. when should we disable access to the internet for the user again)
 
+1.2:
 
 What will be returned back:
 
@@ -37,6 +40,7 @@ What will be returned back:
     status - status of the action - this may be one of "accepted", "done", "rejected"
     comment - comment on the status of the action - this is mostly useful as a free-form explanation of the failed status
 
+1.3:
 
 Example of getting a current status of the action:
 
