@@ -16,11 +16,11 @@ Request from community portal sent to access management system asking to allow u
 }
 
 Description:
-    requestors_token - token which defines the source of the request - in this case this would be community portal page where user has just logged into and is being granted an access to the internet
+    requestors_token - token which defines the source of the request - in this case this would be community portal page where user has just logged into and is being granted an access to the internet; this token is assigned as a static string to the web app
     time - unix timestamp of when this request for action has been created
     action - name of the action to be taken
     options - list of options for this particular action
-        connection_token - token identifying IP and MAC of the user to be used for the action (this will be defined in later version of this document) - this will be provided as part of the users first HTTP request to the portal page
+        connection_token - token identifying IP and MAC of the user to be used for the action - this will be provided to the web app as HTTP GET parameter
         access_tier - a specific option for this action - this varies depending on the action
         valid_until - until what time (in unix timestamp) is the effect of the action valid for (e.g. when should we disable access to the internet for the user again)
 
