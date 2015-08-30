@@ -1,0 +1,67 @@
+#!/usr/bin/python3
+
+import time
+import json
+import argparse
+import http.server
+import socketserver
+
+PORT = 8012
+
+parser = argparse.ArgumentParser(description='HTTP API for users access control')
+parser.add_argument('--verbose', '-v', action='count', help='Enable verbosity printing')
+
+args = parser.parse_args()
+
+class myHandler(http.server.SimpleHTTPRequestHandler):
+
+    def log_message(self, format, *args):
+        return
+
+    def do_GET(self):
+        r = json.dumps( {
+                "error": "GET HTTP requests not supported! Use POST."
+            } 
+        )
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()  
+        self.wfile.write(r.encode("utf-8"))
+        self.wfile.flush()
+       
+    def do_POST(self):
+        try:
+            req = json.loads(self.rfile.read(int(self.headers['content-length'])).decode("utf-8"))
+        except Exception as e:
+            print("Unknown request")
+        if req['action'] == 'allow_internet':
+            if args.verbose:
+                print("@{} allow_internet action request for {}".format(int(time.time()), req['options']['connection_token']))
+            status, comment = allow_internet_for(req['options']['connection_token'])
+        res = { 
+                "original_request": req,
+                "action_id": time.time(),
+                "status":    str(status),
+                "comment":   str(comment)
+        }
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()  
+        self.wfile.write(json.dumps(res).encode("utf-8"))
+        self.wfile.flush()
+
+def allow_internet_for(connection_token):
+    if args.verbose:
+        print("    allowing internet for " + connection_token)
+    # placeholder - here we should call all the iptables and proxy rules to allow internet access
+    status = "done"
+    message = "Internet allowed for {}".format(connection_token) 
+    if args.verbose:
+        print("    {}".format(message))
+    return (status, message) 
+
+socketserver.TCPServer.allow_reuse_address = True
+httpd = socketserver.TCPServer(("", PORT), myHandler)
+
+print("HTTP JSON API being served on TCP port ", PORT)
+httpd.serve_forever()

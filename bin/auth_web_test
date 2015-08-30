@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+
+import json
+import time
+import requests
+import http.server
+import socketserver
+from urllib.parse import parse_qs, urlparse
+
+PORT = 8011
+API_URL = 'http://localhost:8012'
+
+class myHandler(http.server.SimpleHTTPRequestHandler):
+   def do_GET(self):
+       parse = urlparse(self.path)
+       query = parse_qs(parse[4])
+       connection_token = query['connection_token'][0]
+
+       print("Autheticating connection_token {} against API here: {}".format(connection_token, API_URL))
+       req = {
+           "reqestors_token": "auth_web_test",
+           "time": int(time.time()),
+           "action": "allow_internet",
+           "options": {
+               "connection_token": connection_token,
+               "access_tier": 1,
+               "valid_until": int(time.time() + 900)
+           }
+       }
+       res = requests.post(API_URL, json = req).json()
+       print("Response from API server: {}\n".format(str(res)))
+       self.send_response(200)
+       self.end_headers()  
+       self.wfile.write(json.dumps(res).encode("utf-8"))
+       self.wfile.flush()
+
+socketserver.TCPServer.allow_reuse_address = True
+httpd = socketserver.TCPServer(("", PORT), myHandler)
+
+print("serving at port", PORT)
+httpd.serve_forever()
